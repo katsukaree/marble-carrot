@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "aes_math.h"
 
 #define   BLOCKSIZE 128
 #define   KEYLENGTH 128
@@ -9,9 +10,15 @@ int main(int argc, char *argv[]) {
     unsigned char *buffer;
     FILE *input_file = fopen(argv[1], "rb");
     
+    // Check for file argument
+    if (argc != 2) {
+    	fprintf(stderr, "Usage: ./aes.out INPUT_FILE\n");
+	return 1;
+    }
+    
     // Check for file. If not, throw error
     if (!input_file) {
-        fprintf(stderr, "cannot open input file\n");
+        fprintf(stderr, "Cannot find file %s\n", argv[1]);
         return 1;
     }
 
