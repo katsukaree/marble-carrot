@@ -51,5 +51,8 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Editor files
+*.swp
+
 # Input files
 input
