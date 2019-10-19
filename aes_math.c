@@ -2,15 +2,11 @@
 #include <math.h>
 #include "aes_math.h"
 
-#define  MULT_IRR_POLY 283; 
+#define  MULT_IRR_POLY 283 
 
-unsigned char multiplication(unsigned char a, unsigned char b);
-unsigned char gf_modulo(unsigned char c, unsigned char d);
-
-unsigned char multiplication(unsigned char multiplicand, unsigned char multiplier)
+unsigned int multiplication(unsigned char multiplicand, unsigned char multiplier)
 {
-    unsigned char product;
-    int bit_length;
+    unsigned int product, bit_length, intermediate;
 
     if (multiplier==1)
     {
@@ -22,42 +18,41 @@ unsigned char multiplication(unsigned char multiplicand, unsigned char multiplie
     }
     else
     {
-        while (multiplier != 0)
+	product = 0;
+	while (multiplier != 0)
         {
-            bit_length = (int) (log2(multiplier) - 1);
-            product = product ^ (muliplicand * (2 * bit_length));
-            multiplier = multiplier ^ (multiplier * (2 * bitlength));
+            bit_length = (int) (log2(multiplier) + 1);
+	    intermediate = multiplicand << (bit_length - 1);
+	    product = product ^ (intermediate);
+            multiplier = multiplier ^ (1 << bit_length - 1);
         }
     }
     return product;
 }
 
-unsigned char gf_modulo(unsigned char dividend, unsigned char divisor)
+unsigned char gf_modulo(unsigned int dividend, unsigned int divisor)
 {
-    unsigned char modulus;
     unsigned int dividend_length, divisor_length;
 
-    dividend_length = (int) (log2(dividend) - 1);
-    divisor_length = (int) (log2(divisor) - 1);
-
-    modulus = dividend;
+    dividend_length = (int) (log2(dividend) + 1);
+    divisor_length = (int) (log2(divisor) + 1);
 
     while (dividend_length >= divisor_length)
     {
-        modulus = modulus ^ (divisor * (2 * (dividend_length - divisor_length)));
-        dividend_length = (int) (log2(dividend) - 1);
-        divisor_length = (int) (log2(divisor) - 1);
+	dividend = dividend ^ (divisor << (dividend_length - divisor_length));
+        dividend_length = (int) (log2(dividend) + 1);
+        divisor_length = (int) (log2(divisor) + 1);
     }
 
-    return modulus;
+    return dividend;
 }
 
 unsigned char gf_multiplication(unsigned char multiplicand, unsigned char multiplier)
 {
-    unsigned char product;
+    unsigned int product;
 
     product = multiplication(multiplicand, multiplier);
-    product = gf_modulo(product, MULT_IRR_POLY);
+    product = gf_modulo(product, (unsigned int) MULT_IRR_POLY);
 
     return product;
 }
