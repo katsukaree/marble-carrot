@@ -56,3 +56,13 @@ unsigned char gf_multiplication(unsigned char multiplicand, unsigned char multip
 
     return product;
 }
+
+unsigned char division(unsigned int dividend, unsigned int divisor)
+{
+    quotient = 0;
+
+    dividend_length = (int) (log2(dividend) + 1);
+    divisor_length = (int) (log2(divisor) + 1);
+
+    return quotient;
+}
